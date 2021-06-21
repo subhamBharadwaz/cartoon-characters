@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "../../../styles/Home.module.css";
 
 const defaultEndpoint = `https://rickandmortyapi.com/api/character/`;
@@ -29,7 +30,7 @@ export default function Character({ data }) {
         <h1 className={styles.title}>{name}</h1>
         <div className={styles.profile}>
           <div className={styles.profileImage}>
-            <img src={image} alt={name} />
+            <Image src={image} alt={name} width={300} height={300} />
           </div>
           <div className={styles.profileDetails}>
             <h2>Character Details</h2>
@@ -58,7 +59,7 @@ export default function Character({ data }) {
       </main>
       <p className={styles.back}>
         <Link href="/">
-          <a>Back to All Characters</a>
+          <a>Back to All</a>
         </Link>
       </p>
     </div>

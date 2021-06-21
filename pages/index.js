@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 
@@ -17,6 +18,7 @@ export async function getServerSideProps() {
 }
 
 export default function Home({ data }) {
+  console.log(data);
   const { info, results: defaultResults = [] } = data;
   const [results, updateResults] = useState(defaultResults);
 
@@ -135,7 +137,12 @@ export default function Home({ data }) {
               >
                 <Link href="/character/[id]" as={`/character/${id}`}>
                   <a>
-                    <img src={image} alt={`${name} Thumbnail`} />
+                    <Image
+                      src={image}
+                      alt={`${name} Thumbnail`}
+                      width={300}
+                      height={300}
+                    />
                     <h3>{name}</h3>
                   </a>
                 </Link>
