@@ -1,8 +1,80 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import styles from "../styles/Home.module.css";
 
-export default function Home() {
+const defaultEndpoint = `https://rickandmortyapi.com/api/character/`;
+
+export async function getServerSideProps() {
+  const res = await fetch(defaultEndpoint);
+  const data = await res.json();
+  return {
+    props: {
+      data,
+    },
+  };
+}
+
+export default function Home({ data }) {
+  const { info, results: defaultResults = [] } = data;
+  const [results, updateResults] = useState(defaultResults);
+
+  const [page, updatePage] = useState({
+    ...info,
+    current: defaultEndpoint,
+  });
+
+  const { current } = page;
+
+  useEffect(() => {
+    if (current === defaultEndpoint) return;
+
+    async function request() {
+      const res = await fetch(current);
+      const nextData = await res.json();
+
+      updatePage({
+        current,
+        ...nextData.info,
+      });
+
+      if (!nextData.info?.prev) {
+        updateResults(nextData.results);
+        return;
+      }
+
+      updateResults((prev) => {
+        return [...prev, ...nextData.results];
+      });
+    }
+
+    request();
+  }, [current]);
+
+  function handleLoadMore() {
+    updatePage((prev) => {
+      return {
+        ...prev,
+        current: page?.next,
+      };
+    });
+  }
+
+  function handleSubmitSearch(e) {
+    e.preventDefault();
+    const { currentTarget = {} } = e;
+    const fields = Array.from(currentTarget?.elements);
+    const fieldQuery = fields.find((field) => field.name === "query");
+
+    const value = fieldQuery.value || "";
+    const endpoint = `https://rickandmortyapi.com/api/character/?name=${value}`;
+
+    updatePage({
+      current: endpoint,
+    });
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,58 +84,69 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {
+              scale: 0.8,
+              opacity: 0,
+            },
+            visible: {
+              scale: 1,
+              opacity: 1,
+              transition: {
+                delay: 0.4,
+              },
+            },
+          }}
         >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+          <h1 className={styles.title}>Wubba Lubba Dub Dub!</h1>
+        </motion.div>
+        <p className={styles.description}>Rick and Morty Character Wiki</p>
+        <form onSubmit={handleSubmitSearch} className={styles.search}>
+          <input type="search" name="query" />
+          <button>Search</button>
+        </form>
+
+        <ul className={styles.grid}>
+          {results.map((result) => {
+            const { image, id, name } = result;
+            return (
+              <motion.li
+                whileHover={{
+                  position: "relative",
+                  zIndex: 1,
+                  background: "white",
+                  scale: [1, 1.2, 1.1],
+                  rotate: [0, 10, -10, 0],
+                  transition: {
+                    duration: 0.2,
+                  },
+                  filter: [
+                    "hue-rotate(0) contrast(100%)",
+                    "hue-rotate(360deg) contrast(200%)",
+                    "hue-rotate(45deg) contrast(300%)",
+                    "hue-rotate(0) contrast(100%)",
+                  ],
+                }}
+                key={id}
+                className={styles.card}
+              >
+                <Link href="/character/[id]" as={`/character/${id}`}>
+                  <a>
+                    <img src={image} alt={`${name} Thumbnail`} />
+                    <h3>{name}</h3>
+                  </a>
+                </Link>
+              </motion.li>
+            );
+          })}
+        </ul>
+        <p>
+          <button onClick={handleLoadMore}>Load More</button>
+        </p>
+      </main>
     </div>
-  )
+  );
 }
