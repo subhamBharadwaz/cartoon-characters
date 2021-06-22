@@ -4,21 +4,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import NProgress from "nprogress";
 import Router from "next/router";
 
-Router.events.on("routeChangeStart", (url) => {
-  console.log(`Loading: ${url}`);
+Router.onRouteChangeStart = (url) => {
   NProgress.start();
-});
-Router.events.on("routeChangeComplete", () => NProgress.done());
-Router.events.on("routeChangeError", () => NProgress.done());
+};
+
+Router.onRouteChangeComplete = () => NProgress.done();
+
+Router.onRouteChangeError = () => NProgress.done();
+NProgress.configure({ showSpinner: false });
 
 function MyApp({ Component, pageProps, router }) {
   return (
     <>
       <Head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css"
-        />
+        <link rel="stylesheet" href="/nprogress.css" />
       </Head>
       <AnimatePresence>
         <motion.div
