@@ -1,8 +1,12 @@
 import Head from "next/head";
+import { useState } from "react";
 import "../styles/globals.css";
 import { motion, AnimatePresence } from "framer-motion";
 import NProgress from "nprogress";
 import Router from "next/router";
+
+import { ThemeProvider } from "styled-components";
+import { lightTheme, darkTheme, GlobalStyles } from "../ThemeConfig";
 
 Router.onRouteChangeStart = (url) => {
   NProgress.start();
@@ -14,11 +18,17 @@ Router.onRouteChangeError = () => NProgress.done();
 NProgress.configure({ showSpinner: false });
 
 function MyApp({ Component, pageProps, router }) {
+  const [theme, setTheme] = useState("light");
+
+  const toggleTheme = () => {
+    theme == "light" ? setTheme("dark") : setTheme("light");
+  };
   return (
     <>
       <Head>
         <link rel="stylesheet" href="/nprogress.css" />
       </Head>
+
       <AnimatePresence>
         <motion.div
           key={router.route}
@@ -39,7 +49,13 @@ function MyApp({ Component, pageProps, router }) {
             },
           }}
         >
-          <Component {...pageProps} />
+          <ThemeProvider theme={theme == "light" ? lightTheme : darkTheme}>
+            <GlobalStyles />
+            <button className="btn theme-toggler" onClick={toggleTheme}>
+              Switch theme
+            </button>
+            <Component {...pageProps} />
+          </ThemeProvider>
         </motion.div>
       </AnimatePresence>
     </>

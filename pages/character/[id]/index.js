@@ -59,7 +59,7 @@ export default function Character({ data }) {
       </main>
       <p className={styles.back}>
         <Link href="/">
-          <a>Back to All</a>
+          <a className="btn back">Back to All</a>
         </Link>
       </p>
     </div>

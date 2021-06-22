@@ -107,7 +107,7 @@ export default function Home({ data }) {
         <p className={styles.description}>Rick and Morty Character Wiki</p>
         <form onSubmit={handleSubmitSearch} className={styles.search}>
           <input type="search" name="query" />
-          <button>Search</button>
+          <button className="btn">Search</button>
         </form>
 
         <ul className={styles.grid}>
@@ -118,7 +118,7 @@ export default function Home({ data }) {
                 whileHover={{
                   position: "relative",
                   zIndex: 1,
-                  background: "white",
+
                   scale: [1, 1.2, 1.1],
                   rotate: [0, 10, -10, 0],
                   transition: {
@@ -150,7 +150,9 @@ export default function Home({ data }) {
           })}
         </ul>
         <p>
-          <button onClick={handleLoadMore}>Load More</button>
+          <button className="btn" onClick={handleLoadMore}>
+            Load More
+          </button>
         </p>
       </main>
     </div>

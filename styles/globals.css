@@ -14,3 +14,17 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.btn {
+  padding: 0.75em 1em;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.btn.theme-toggler {
+  position: absolute;
+  right: 10%;
+  top: 5%;
+}
