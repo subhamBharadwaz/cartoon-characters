@@ -23,8 +23,14 @@ a {
   font-size: 0.9rem;
   cursor: pointer;
 }
+
 .btn.theme-toggler {
   position: absolute;
   right: 10%;
   top: 5%;
+  transition: 0.2s ease;
+}
+.btn.theme-toggler:hover,
+.btn.theme-toggler:active {
+  scale: 1.1;
 }
