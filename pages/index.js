@@ -18,7 +18,6 @@ export async function getServerSideProps() {
 }
 
 export default function Home({ data }) {
-  console.log(data);
   const { info, results: defaultResults = [] } = data;
   const [results, updateResults] = useState(defaultResults);
 
